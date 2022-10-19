@@ -1,5 +1,4 @@
 from database.models import Student, db, Group, Course
-
 from handlers.generate_data import random_group, courses, random_students
 from flask.cli import AppGroup
 import random
@@ -58,3 +57,6 @@ def mix_student_courses():
             student.following.append(course)
             db.session.add(student)
             db.session.commit()
+
+
+

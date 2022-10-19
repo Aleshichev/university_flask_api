@@ -1,4 +1,5 @@
-from app import app, db
+from app import db
+
 
 student_courses = db.Table('student_courses',
                            db.Column('student_id', db.Integer, db.ForeignKey('students.group_id')),
@@ -25,6 +26,12 @@ class Student(db.Model):
     last_name = db.Column(db.String(50), nullable=True)
     following = db.relationship('Course', secondary=student_courses, backref="followers")
 
+    def to_dict(self):
+        dictionary = {}
+        for column in self.__table__.columns:
+            dictionary[column.name] = getattr(self, column.name)
+        return dictionary
+
     def __repr__(self):
         return f"<student: {self.first_name} {self.last_name}>"
 
@@ -37,3 +44,7 @@ class Course(db.Model):
 
     def __repr__(self):
         return f"<course: {self.name} - {self.description}>"
+
+
+
+

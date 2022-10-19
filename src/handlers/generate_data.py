@@ -1,6 +1,6 @@
 import random
 import string
-from random import choice, randint, shuffle
+from random import choice
 import names
 
 """
