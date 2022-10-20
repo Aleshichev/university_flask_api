@@ -1,26 +1,28 @@
 from flask import Flask
 from flask_migrate import Migrate
-from flask_restful import Api
-from flask_sqlalchemy import SQLAlchemy
+from handlers.crud import LessOrEquals
+migrate = Migrate()
 
 
+def create_app():
+    """Application-factory pattern"""
+    app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:123@localhost/university'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    from database.models import db
+    db.init_app(app)
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:123@localhost/university'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+    from handlers.create_data import user_cli
+    app.cli.add_command(user_cli)
 
-migrate = Migrate(app, db)
+    migrate.init_app(app, db)
 
-from handlers.create_data import user_cli
-from handlers.crud import Main
-
-api = Api()
-api.add_resource(Main, '/get')
-api.init_app(app)
-
-app.cli.add_command(user_cli)
+    from handlers.crud import api
+    api.add_resource(LessOrEquals, '/student')
+    # api.add_resource(Add, '/add')
+    api.init_app(app)
+    return app
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    create_app().run(debug=True)
