@@ -28,7 +28,7 @@ def random_naumber():
 def random_group():
     group_list = []
     for i in range(10):
-        group_list.append(f"{random_letter()}{random_letter()} - {random_naumber()}{random_naumber()}")
+        group_list.append(f"{random_letter()}{random_letter()}-{random_naumber()}{random_naumber()}")
     return group_list
 
 

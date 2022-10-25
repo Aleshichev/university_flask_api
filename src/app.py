@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_migrate import Migrate
-from handlers.crud import LessOrEquals
+from handlers.crud import LessStudent, Groups, AddStudent, DeleteStudent, DeleteStudentFromCourse, StudentToCourse
 migrate = Migrate()
 
 
@@ -18,8 +18,12 @@ def create_app():
     migrate.init_app(app, db)
 
     from handlers.crud import api
-    api.add_resource(LessOrEquals, '/student')
-    # api.add_resource(Add, '/add')
+    api.add_resource(LessStudent, '/api/v1/group/less')
+    api.add_resource(Groups, '/api/v1/group')
+    api.add_resource(AddStudent, '/api/v1/student')
+    api.add_resource(DeleteStudent, '/api/v1/student/delete/<int:id>')
+    api.add_resource(DeleteStudentFromCourse, '/api/v1/student/delete')
+    api.add_resource(StudentToCourse, '/api/v1/student/add')
     api.init_app(app)
     return app
 
