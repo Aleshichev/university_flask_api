@@ -22,7 +22,7 @@ class LessStudent(Resource):
             if value == min_number_students:
                 list_group[key] = value
 
-        return jsonify(list_group)
+        return list_group, 200
 
 
 class Groups(Resource):
@@ -30,8 +30,8 @@ class Groups(Resource):
     def get(self):
         name = request.args.get('name')
         all_students = Student.query.filter_by(group_id=name).all()
-        print(all_students)
-        return jsonify(students=[student.to_dict() for student in all_students])
+        students = [student.to_dict() for student in all_students]
+        return students, 200
 
 
 class AddStudent(Resource):
@@ -79,7 +79,6 @@ class StudentToCourse(Resource):
             return {'error': 'student not found'}, 404
 
 
-
 class DeleteStudentFromCourse(Resource):
     def delete(self):
         name = request.args.get('name')
@@ -93,5 +92,3 @@ class DeleteStudentFromCourse(Resource):
             return f'{currrent_course.name} is deleted', 200
         except ValueError:
             return {'error': 'course not found'}, 404
-
-

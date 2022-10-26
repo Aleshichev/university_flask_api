@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_migrate import Migrate
 from handlers.crud import LessStudent, Groups, AddStudent, DeleteStudent, DeleteStudentFromCourse, StudentToCourse
+
 migrate = Migrate()
 
 

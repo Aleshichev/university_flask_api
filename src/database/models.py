@@ -29,7 +29,7 @@ class Group(db.Model):
 
 class Student(db.Model):
     __tablename__ = 'students'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     group_id = db.Column(db.String(50))
     first_name = db.Column(db.String(50), nullable=True)
     last_name = db.Column(db.String(50), nullable=True)
