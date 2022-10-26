@@ -2,7 +2,6 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-
 student_courses = db.Table('student_courses',
                            db.Column('student_id', db.Integer, db.ForeignKey('students.id')),
                            db.Column('course_id', db.Integer, db.ForeignKey('courses.id'))
