@@ -29,9 +29,14 @@ class Groups(Resource):
 
     def get(self):
         name = request.args.get('name')
-        all_students = Student.query.filter_by(group_id=name).all()
-        students = [student.to_dict() for student in all_students]
-        return students, 200
+        student_list = []
+        for student in Student.query.filter_by(group_id=name).all():
+            row_as_dict = student.__dict__
+            row_as_dict.pop('_sa_instance_state', None)
+            student_list.append(row_as_dict)
+            print(student_list)
+
+        return student_list, 200
 
 
 class AddStudent(Resource):
