@@ -27,7 +27,6 @@ def add_data_courses():
 def add_data_student():
     students_list = random_students()
     all_group = Group.query.all()
-    id = 1
     try:
         for group in all_group:
             student_to_group = random.sample(students_list, random.randint(20, 30))
@@ -36,9 +35,8 @@ def add_data_student():
                 name = students_list[i].split(" ")[0]
                 l_name = students_list[i].split(" ")[1]
                 some_group = group.name
-                new_course = Student(id=id, first_name=name,
+                new_course = Student(first_name=name,
                                      last_name=l_name, group_id=some_group)
-                id += 1
                 i += 1
                 students_list.remove(student)
                 db.session.add(new_course)
