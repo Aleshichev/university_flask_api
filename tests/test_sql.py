@@ -39,7 +39,6 @@ class MyTestCase(TestCase):
         course = Course.query.filter_by(id=1)
         assert course is not None
 
-
     def test_add_data_group(self):
         app = self.create_app()
         runner = app.test_cli_runner()
@@ -69,6 +68,7 @@ class MyTestCase(TestCase):
         runner = app.test_cli_runner()
         result = runner.invoke(mix_student_courses)
         assert '' in result.output
+
 
 if __name__ == '__main__':
     unittest.main()
