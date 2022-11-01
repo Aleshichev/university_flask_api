@@ -19,10 +19,10 @@ class MyTestCase(TestCase):
         self.app = self.create_app()
         db.create_all()
         self.client = self.app.test_client()
-
-    def tearDown(self):
-        db.session.remove()
-        db.drop_all()
+    #
+    # def tearDown(self):
+    #     db.session.remove()
+    #     db.drop_all()
 
     def test_db_Group(self):
         db.session.add(Group(name='xz-12'))

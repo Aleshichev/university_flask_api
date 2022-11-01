@@ -1,6 +1,6 @@
 from database.models import Student, Group, db, Course
 from flask import request
-from flask_restful import Resource, Api, fields, marshal_with
+from flask_restful import Resource, Api, fields, marshal_with, reqparse
 
 api = Api()
 
@@ -44,10 +44,14 @@ class Students(Resource):
     @marshal_with(resource_fields)
     def post(self):
         if request.is_json:
-
-            new_student = Student(first_name=request.json['FirstName'],
-                                  last_name=request.json['LastName'],
-                                  group_id=request.json['GroupId'], )
+            parser = reqparse.RequestParser()
+            parser.add_argument("FirstName")
+            parser.add_argument("LastName")
+            parser.add_argument("GroupId")
+            params = parser.parse_args()
+            new_student = Student(first_name=params['FirstName'],
+                                  last_name=params['LastName'],
+                                  group_id=params['GroupId'], )
             db.session.add(new_student)
             db.session.commit()
             return new_student
@@ -65,14 +69,17 @@ class Students(Resource):
 
 
 class StudentToCourse(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument("Name")
+    parser.add_argument("LastName")
+    parser.add_argument("Course")
+
     def post(self):
-        name = request.args.get('name')
-        last_name = request.args.get('lastname')
-        course = request.args.get('course')
-        student = Student.query.filter_by(first_name=name, last_name=last_name).first()
-        currrent_course = Course.query.filter_by(name=course).first()
+        params = self.parser.parse_args()
+        student = Student.query.filter_by(first_name=params["Name"], last_name=params["LastName"]).first()
+        current_course = Course.query.filter_by(name=params["Course"]).first()
         try:
-            student.following.append(currrent_course)
+            student.following.append(current_course)
             db.session.add(student)
             db.session.commit()
             return f'{student.first_name} {student.last_name} is add', 200
@@ -80,14 +87,12 @@ class StudentToCourse(Resource):
             return {'error': 'student not found'}, 404
 
     def delete(self):
-        name = request.args.get('name')
-        last_name = request.args.get('lastname')
-        course = request.args.get('course')
-        student = Student.query.filter_by(first_name=name, last_name=last_name).first()
-        currrent_course = Course.query.filter_by(name=course).first()
+        params = self.parser.parse_args()
+        student = Student.query.filter_by(first_name=params["Name"], last_name=params["LastName"]).first()
+        current_course = Course.query.filter_by(name=params["Course"]).first()
         try:
-            student.following.remove(currrent_course)
+            student.following.remove(current_course)
             db.session.commit()
-            return f'{currrent_course.name} is deleted', 200
+            return f'{current_course.name} is deleted', 200
         except ValueError:
             return {'error': 'course not found'}, 404
