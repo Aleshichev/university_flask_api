@@ -12,6 +12,7 @@ class Group(db.Model):
     __tablename__ = 'groups'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True)
+    students = db.relationship('Student', backref='groups')
 
     def __init__(self, name):
         self.name = name
@@ -23,7 +24,7 @@ class Group(db.Model):
 class Student(db.Model):
     __tablename__ = 'students'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    group_id = db.Column(db.String(50))
+    group_id = db.Column(db.Integer, db.ForeignKey("groups.id"))
     first_name = db.Column(db.String(50), nullable=True)
     last_name = db.Column(db.String(50), nullable=True)
     following = db.relationship('Course', secondary=student_courses, backref="followers")

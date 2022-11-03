@@ -1,54 +1,80 @@
 from database.models import Student, Group, db, Course
 from flask import request
 from flask_restful import Resource, Api, fields, marshal_with, reqparse
+from sqlalchemy import func
 
 api = Api()
 
-resource_fields = {
+students_fields = {
     'id': fields.Integer,
     'group_id': fields.String,
     'first_name': fields.String,
     'last_name': fields.String,
 }
 
+group_fields = {
+    'id': fields.Integer,
+    'name': fields.String,
+}
+
 
 class LessGroup(Resource):
 
     def get(self):
-        dict = {}
-        all_group = Group.query.all()
-        for group in all_group:
-            all_students = Student.query.filter_by(group_id=group.name).all()
-            if len(all_students) == 0:
-                continue
-            dict[group.name] = len(all_students)
-        min_number_students = min(dict.values())
-        group = {}
-        for key, value in dict.items():
-            if value == min_number_students:
-                group[key] = value
+        number = request.args.get('number')
+        groups = Student.query.with_entities(Student.group_id).\
+            group_by(Student.group_id). \
+            having(func.count(Student.id) <= number).all()
 
-        return group, 200
+        group_list = []
+        for group in groups:
+            group_list.append(*group)
+
+        return group_list, 200
+
+    @marshal_with(group_fields, envelope='group')
+    def post(self):
+        if request.is_json:
+            parser = reqparse.RequestParser()
+            parser.add_argument("Name")
+            params = parser.parse_args()
+            new_group = Group(name=params["Name"])
+            db.session.add(new_group)
+            db.session.commit()
+            return new_group
+        else:
+            return {'error': 'Request must be JSON'}, 404
+
+    def delete(self):
+        id = request.args.get('id')
+        group = Group.query.get(id)
+        if group is None:
+            return {'error': 'not found'}, 404
+        db.session.delete(group)
+        db.session.commit()
+        return f'{id} is deleted', 200
 
 
 class Students(Resource):
-    @marshal_with(resource_fields, envelope='resource')
+    parser = reqparse.RequestParser()
+    parser.add_argument("FirstName", type=str, required=True)
+    parser.add_argument("LastName", type=str, required=True)
+    parser.add_argument("GroupId", type=int, required=True)
+
+    @marshal_with(students_fields, envelope='students')
     def get(self):
-        name = request.args.get('name')
+        id = request.args.get('id')
         student_list = []
-        for student in Student.query.filter_by(group_id=name).all():
+        for student in Student.query.filter_by(group_id=id).all():
             student_list.append(student)
 
         return student_list
 
-    @marshal_with(resource_fields)
+    @marshal_with(students_fields)
     def post(self):
         if request.is_json:
-            parser = reqparse.RequestParser()
-            parser.add_argument("FirstName")
-            parser.add_argument("LastName")
-            parser.add_argument("GroupId")
-            params = parser.parse_args()
+
+            params = self.parser.parse_args()
             new_student = Student(first_name=params['FirstName'],
                                   last_name=params['LastName'],
                                   group_id=params['GroupId'], )
@@ -57,6 +83,18 @@ class Students(Resource):
             return new_student
         else:
             return {'error': 'Request must be JSON'}, 404
+
+    @marshal_with(students_fields)
+    def put(self):
+        id = request.args.get('id')
+        student = Student.query.get(id)
+        params = self.parser.parse_args()
+        student.group_id = params['GroupId']
+        student.last_name = params['LastName']
+        student.first_name = params['FirstName']
+
+        db.session.commit()
+        return student, 201
 
     def delete(self):
         id = request.args.get('id')
@@ -70,14 +108,14 @@ class Students(Resource):
 
 class StudentToCourse(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument("Name")
-    parser.add_argument("LastName")
-    parser.add_argument("Course")
+    parser.add_argument("Name", type=str, required=True)
+    parser.add_argument("LastName", type=str, required=True)
+    parser.add_argument("Id", type=int, required=True)
 
     def post(self):
         params = self.parser.parse_args()
         student = Student.query.filter_by(first_name=params["Name"], last_name=params["LastName"]).first()
-        current_course = Course.query.filter_by(name=params["Course"]).first()
+        current_course = Course.query.filter_by(id=params["Id"]).first()
         try:
             student.following.append(current_course)
             db.session.add(student)
@@ -89,7 +127,7 @@ class StudentToCourse(Resource):
     def delete(self):
         params = self.parser.parse_args()
         student = Student.query.filter_by(first_name=params["Name"], last_name=params["LastName"]).first()
-        current_course = Course.query.filter_by(name=params["Course"]).first()
+        current_course = Course.query.filter_by(id=params["Id"]).first()
         try:
             student.following.remove(current_course)
             db.session.commit()

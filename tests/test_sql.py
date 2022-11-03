@@ -19,7 +19,7 @@ class MyTestCase(TestCase):
         self.app = self.create_app()
         db.create_all()
         self.client = self.app.test_client()
-    #
+
     # def tearDown(self):
     #     db.session.remove()
     #     db.drop_all()

@@ -34,7 +34,7 @@ def add_data_student():
             for student in student_to_group:
                 name = students_list[i].split(" ")[0]
                 l_name = students_list[i].split(" ")[1]
-                some_group = group.name
+                some_group = group.id
                 new_course = Student(first_name=name,
                                      last_name=l_name, group_id=some_group)
                 i += 1

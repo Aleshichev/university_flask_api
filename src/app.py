@@ -19,7 +19,7 @@ def create_app():
     migrate.init_app(app, db)
 
     from handlers.crud import api
-    api.add_resource(LessGroup, '/api/v1/group/less')
+    api.add_resource(LessGroup, '/api/v1/group')
     api.add_resource(Students,  '/api/v1/students')
     api.add_resource(StudentToCourse, '/api/v1/students/course')
     api.init_app(app)
