@@ -1,9 +1,7 @@
 from database.models import Student, Group, db, Course
 from flask import request
-from flask_restful import Resource, Api, fields, marshal_with, reqparse
+from flask_restful import Resource, fields, marshal_with, reqparse
 from sqlalchemy import func
-
-api = Api()
 
 students_fields = {
     'id': fields.Integer,
@@ -23,8 +21,8 @@ class LessGroup(Resource):
     def get(self):
         number = request.args.get('number')
         groups = Student.query.with_entities(Student.group_id).\
-            group_by(Student.group_id). \
-            having(func.count(Student.id) <= number).all()
+            group_by(Student.group_id).\
+            having((func.count(Student.id)) <= number).all()
 
         group_list = []
         for group in groups:
@@ -70,7 +68,7 @@ class Students(Resource):
 
         return student_list
 
-    @marshal_with(students_fields)
+    @marshal_with(students_fields, envelope='students')
     def post(self):
         if request.is_json:
 
@@ -84,7 +82,7 @@ class Students(Resource):
         else:
             return {'error': 'Request must be JSON'}, 404
 
-    @marshal_with(students_fields)
+    @marshal_with(students_fields, envelope='students')
     def put(self):
         id = request.args.get('id')
         student = Student.query.get(id)

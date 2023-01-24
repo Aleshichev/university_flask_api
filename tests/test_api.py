@@ -10,7 +10,10 @@ def create_app():
     app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:123@localhost/test_db"
     app.config["TESTING"] = True
     db.init_app(app)
-    from handlers.crud import api
+
+    from flask_restful import Api
+    api = Api()
+
     api.add_resource(LessGroup, '/api/v1/group')
     api.add_resource(Students, '/api/v1/students')
     api.add_resource(StudentToCourse, '/api/v1/students/course')
@@ -68,14 +71,14 @@ class TestMain():
         assert response.status_code == 201
 
     def test_delete_student(self):
-        number = 100
+        number = 102
         response = self.client.delete(f'/api/v1/students?id={number}')
         assert response.status_code == 200
 
     def test_student_to_course(self):
         data = {
-            "Name": "Donald",
-            "LastName": "Smith",
+            "Name": "Stiven",
+            "LastName": "Spilberg",
             "Id": "1"
         }
         response = self.client.post('/api/v1/students/course', json=data)
@@ -83,8 +86,8 @@ class TestMain():
 
     def test_delete_student_from_course(self):
         data = {
-            "Name": "Donald",
-            "LastName": "Smith",
+            "Name": "Stiven",
+            "LastName": "Spilberg",
             "Id": "1"
         }
         response = self.client.delete('/api/v1/students/course', json=data)
