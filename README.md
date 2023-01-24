@@ -25,3 +25,8 @@ To automatically generate and add new data use these commands
 - **/api/v1/students** - all students with their group and list of courses. **GET** method has an optional parameter "id", it returns all students who has this parameter's value in their list of courses. In the **POST** method and **DELETE** method you can add new student or remove existing student.In the **PUT** method you can change an existing student.
 
 - **/api/v1/students/course** - all courses with their description and list of students who are enrolled in this course. Using the **POST** method you can enroll a student in a course and using the **DELETE** method you can remove a student from the course.
+
+## Unittests :
+- **test_generate_data.py** - checks automatic data generation.
+- **test_sql.py** - validates the completion of data in the database .
+- **test_api.py** - checks feedback api.
