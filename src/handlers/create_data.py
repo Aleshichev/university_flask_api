@@ -6,6 +6,7 @@ import random
 user_cli = AppGroup('user')
 
 
+
 @user_cli.command('add_data_group')
 def add_data_group():
     group_list = random_group()

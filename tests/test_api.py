@@ -4,6 +4,7 @@ from database.models import db
 from handlers.crud import LessGroup, Students, StudentToCourse
 
 
+
 def create_app():
     app = Flask(__name__)
     # app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"

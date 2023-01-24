@@ -10,6 +10,7 @@ from handlers.generate_data import random_group, first_name, last_name, random_s
                                                    (random_letter(), str),
                                                    (random_naumber(), str)
                                                    ])
+
 def test_random_group(func, expected_result):
     assert type(func) == expected_result
 

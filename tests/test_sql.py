@@ -24,6 +24,7 @@ class MyTestCase(TestCase):
     #     db.session.remove()
     #     db.drop_all()
 
+
     def test_db_Group(self):
         db.session.add(Group(name='xz-12'))
         group = Group.query.filter_by(id=1)

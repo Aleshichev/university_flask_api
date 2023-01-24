@@ -3,6 +3,7 @@ import string
 from random import choice
 import names
 
+
 courses = ["Matematic", "Algebra", "Biology", "Drawing", "Chemistry", "Geography", "Geometry", "History", "Literature",
            "Physics"]
 
