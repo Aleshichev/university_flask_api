@@ -1,8 +1,6 @@
 # Flask SQL
 ### This is a simple application can insert/select/update/delete data in the database using sqlalchemy and flask rest framework.
 
-An application that inserts/updates/deletes data in the database using Sqlalchemy and Flask REST API framework.
-
 Database has 3 tables:
 
 Groups
